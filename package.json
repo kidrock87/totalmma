@@ -14,7 +14,14 @@
     "dom-serialize": "^2.2.1",
     "telegraph-node": "^1.0.4",
     "vue": "^2.5.2",
+    "vue-cropper": "^0.2.9",
+    "vue-cropper-simple": "^1.1.1",
+    "vue-cropperjs": "^2.2.0",
+    "vue-infinite-scroll": "^2.0.2",
+    "vue-lazyload": "^1.2.3",
+    "vue-localstorage": "^0.6.2",
     "vue-router": "^3.0.1",
+    "vue-tinymce-editor": "^1.6.2",
     "vuetify": "^1.0.0"
   },
   "devDependencies": {
