@@ -1,24 +1,9 @@
 <template>
   <div  class="admin_edit_news align-left">
-      <v-text-field name="input-1" label="Заголовок" id="title" v-model="news_title"></v-text-field>
-      <tinymce id="d1" style="" v-model="news_content"></tinymce>
-      <div style="margin-top:20px;" class="cropper_warp">
-        <img :src="result" id="result_img" alt="croppedImg" v-if="result"/>
-        <vue-cropper v-if="isShow" :img="imgUrl" :ratio="16/9" :result.sync="result" :imgData.sync="imgData" v-on:close="hide"></vue-cropper>
-      </div>
-      <p style="font-size: 18px; width:50%" class="text-xs-left">
-        <v-text-field name="input-1" style="width:50%; float:left"  label="url-адрес картинки" id="url-src"></v-text-field>
-        <v-btn style="float:right" @click="show">Загрузить фото</v-btn>
-      </p>
-      <v-select
-        v-bind:items="states"
-        v-bind:v-model="razd1"
-        label="Раздел"
-        single-line
-        auto
-        prepend-icon="map"
-        hide-details
-      ></v-select>
+      <v-text-field name="input-1" label="url" id="title" v-model="post_url"></v-text-field>
+      <a :href="post_url" target="_blank"><v-btn  color="error">Открыть</v-btn></a>
+
+
 
       <div style="clear: both; margin-top: 40px;">
         <v-btn style="float: rigth;" @click="add_tag">Добавить тег</v-btn>
@@ -51,6 +36,29 @@ import axios from 'axios'
 import router from '../router'
 import VueCropper from 'vue-cropper-simple'
 
+function nodeToDom(node) {
+  if (typeof node === 'string' || node instanceof String) {
+    return document.createTextNode(node);
+  }
+  if (node.tag) {
+    var domNode = document.createElement(node.tag);
+    if (node.attrs) {
+      for (var name in node.attrs) {
+        var value = node.attrs[name];
+        domNode.setAttribute(name, value);
+      }
+    }
+  } else {
+    var domNode = document.createDocumentFragment();
+  }
+  if (node.children) {
+    for (var i = 0; i < node.children.length; i++) {
+      var child = node.children[i];
+      domNode.appendChild(nodeToDom(child));
+    }
+  }
+  return domNode;
+}
 
 export default {
   name: 'admin_edit_news',
@@ -58,7 +66,7 @@ export default {
     return {
       news_title: '',
       news_content: '',
-      razd: '',
+      post_url: '',
       razd1: '',
       old_img: '',
       tags: [],
@@ -96,47 +104,73 @@ export default {
   },
   methods: {
     edit_news(){
-      var title = this.news_title
-      var content = this.news_content;
-      var news_img = this.result;
-      var tags = this.tags;
-      var razd = this.razd1;
-      if(razd == 'Главные новости'){razd = 'main'}
-      else if(razd.length < 1){razd = 'main'}
-      else if(razd == 'Девушки'){razd = 'girls'}
-      else if(razd == 'Видео'){razd = 'video'}
-      else if(razd == 'Кикбоксинг'){razd = 'k1'}
+      let post_url = this.post_url;
+      let original_post_url  = this.post_url;
+      console.log(original_post_url);
+      let news_id =  this.$route.params.id;
+      //http://telegra.ph/V-ozhidanii--Rashid-Magomedov-zhdet-novye-predlozheniya-ot-UFC-05-17
+      //https://api.telegra.ph/getPage/V-ozhidanii--Rashid-Magomedov-zhdet-novye-predlozheniya-ot-UFC-05-17?return_content=true
+      post_url =post_url.slice(17);
+      post_url = 'https://api.telegra.ph/getPage' + post_url + '?return_content=true';
 
-      if(title.length > 0){
-        var news_id = this.$route.params.id;
-        var url = this.$root.server_route+this.$root.server_port+'/update_news/'+news_id;
-        if(this.result.length > 0){
-                axios.post(this.$root.server_route+this.$root.server_port+'/save_images', {id: news_img})
-                .then(function (response) {
-                  var img = response.data[0].img;
-                  axios.post(url, { title: title, content: content, tags: tags, razd: razd, img: img})
-                    .then(function (response) {
-                      console.log(response);
-                      router.push({ path: '/admin' })
-                    })
-                    .catch(function (error) {
-                      console.log(error)
-                  })
-                })
-                .catch(function (error) {
-                  console.log(error)
-                })
-        }else{
-              axios.post(url, { title: title, content: content, tags: tags, razd: razd, img: this.old_img})
+      let tags = this.tags;
+      let insert_date = Date.now();
+
+
+      const vm = this;
+
+      //'https://api.telegra.ph/getPage/V-ozhidanii--Rashid-Magomedov-zhdet-novye-predlozheniya-ot-UFC-05-17?return_content=true'
+
+      axios.get(post_url)
+        .then(function (response) {
+        //  console.log(response.data.result);
+          //console.log()
+
+
+         var ccc = response.data.result.content;
+         ccc.shift();
+
+
+
+         let content = '';
+
+
+
+
+
+
+         for ( var val of ccc ) {
+              var el = nodeToDom(val);
+              el = el.outerHTML;
+              //console.log(el)
+               content += el;
+
+
+          }
+
+         var title = response.data.result.title;
+         var img = response.data.result.image_url;
+         var url = vm.$root.server_route+vm.$root.server_port+'/update_news/'+news_id;
+
+
+         if(post_url.length > 0){
+               axios.post(url, { title: title, content: content, tags: tags, img: img, post_url: original_post_url})
                 .then(function (response) {
                   console.log(response);
                   router.push({ path: '/admin' })
                 })
                 .catch(function (error) {
                   console.log(error)
-              })
+                })
+
         }
-      }
+
+        })
+        .catch(function (error) {
+          console.log(error)
+          //router.push({ path: '/' })
+        })
+
     },
     choose_tag: function (tag) {
       this.new_tag = tag;
@@ -191,8 +225,9 @@ export default {
          this.news_title = response.data.title;
          this.news_content = response.data.content;
          this.tags = response.data.tags;
-         this.razd = response.data.razd;
-         this.old_img = response.data.img
+         this.post_url = response.data.post_url;
+
+         //this.old_img = response.data.img
          //this.posts = response.data
        })
        .catch(e => {

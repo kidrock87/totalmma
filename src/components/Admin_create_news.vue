@@ -1,6 +1,6 @@
 <template>
   <div  class="admin_create_news align-left">
-    <v-text-field name="input-1" label="Заголовок" id="title" v-model="news_title"></v-text-field>
+<!--    <v-text-field name="input-1" label="Заголовок" id="title" v-model="news_title"></v-text-field> -->
     <v-text-field name="input-1" label="src" id="post_url" v-model="news_url"></v-text-field>
 <!--    <tinymce id="d1" style="" v-model="news_content"></tinymce>
 
@@ -126,7 +126,8 @@ export default {
     return {
       news_content: '',
       news_title: '',
-      news_url: 'https://api.telegra.ph/getPage/V-ozhidanii--Rashid-Magomedov-zhdet-novye-predlozheniya-ot-UFC-05-17',
+      //news_url: 'https://api.telegra.ph/getPage/V-ozhidanii--Rashid-Magomedov-zhdet-novye-predlozheniya-ot-UFC-05-17',
+      news_url: '',
       states: ['Главные новости','Девушки','Видео','Кикбоксинг'],
       new_tag: '',
       a_tags: [],
@@ -161,38 +162,6 @@ export default {
   },
   methods: {
 
-    setImage (e) {
-            const file = e.target.files[0];
-
-            if (!file.type.includes('image/')) {
-                alert('Please select an image file');
-                return;
-            }
-
-            if (typeof FileReader === 'function') {
-                const reader = new FileReader();
-
-                reader.onload = (event) => {
-                    this.imgSrc = event.target.result;
-                    // rebuild cropperjs with the updated source
-                    this.$refs.cropper.replace(event.target.result);
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                alert('Sorry, FileReader API not supported');
-            }
-        },
-        cropImage () {
-            // get image data for post processing, e.g. upload or setting image src
-            this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
-        },
-        rotate () {
-            // guess what this does :)
-            this.$refs.cropper.rotate(90);
-        },
-
-
     choose_tag: function (tag) {
       this.new_tag = tag;
     },
@@ -212,12 +181,18 @@ export default {
       this.new_tag = '';
     },
     save_news() {
+      let post_url = this.news_url;
+      let original_post_url = this.news_url;
+      //http://telegra.ph/V-ozhidanii--Rashid-Magomedov-zhdet-novye-predlozheniya-ot-UFC-05-17
+      //https://api.telegra.ph/getPage/V-ozhidanii--Rashid-Magomedov-zhdet-novye-predlozheniya-ot-UFC-05-17?return_content=true
+      post_url =post_url.slice(17);
+      post_url = 'https://api.telegra.ph/getPage' + post_url + '?return_content=true';
+      console.log(post_url)
 
-      let post_url = this.news_url + '?return_content=true';
       let tags = this.tags;
       let insert_date = Date.now();
 
-      console.log(post_url);
+
 
       const vm = this;
 
@@ -253,12 +228,8 @@ export default {
          var title = response.data.result.title;
          var img = response.data.result.image_url;
 
-         console.log(post_url.length)
-
          if(post_url.length > 0){
-              console.log(vm.$root.server_route);
-
-              axios.post(vm.$root.server_route+vm.$root.server_port+'/save_news', {img: img, title: title, content: content, tags: tags, insert_date: insert_date})
+               axios.post(vm.$root.server_route+vm.$root.server_port+'/save_news', {img: img, title: title, content: content, tags: tags, insert_date: insert_date, post_url: original_post_url})
                 .then(function (response) {
                   console.log(response);
                   router.push({ path: '/admin' })
