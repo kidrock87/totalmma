@@ -4,19 +4,17 @@
 
       <v-flex >
         <v-btn  @click="admin_open" color="error">Добавить новость</v-btn>
-        <ul class="newsul" v-if="posts && posts.length">
-          <li style="" v-for="post of posts">
-            <p>
-              <strong style="float: left; margin-right: 10px;">{{post.title}}</strong>
-              <span style="float: right">
+        <v-list two-line subheader>
+          <v-list-tile v-for="post of posts" :key="post.title" avatar @click="">
+            <v-list-tile-content>
+              <v-list-tile-title>{{ post.title }}</v-list-tile-title>
+            </v-list-tile-content>
+            <v-list-tile-action>
                   <a :href="'/#/admin/edit/'+ post._id">Редактировать</a>
-                  <a :href="'/admin/remove/'+ post._id">Удалить</a>
-              </span>
-            </p>
-
-
-          </li>
-        </ul>
+            </v-list-tile-action>
+          </v-list-tile>
+          <v-divider inset></v-divider>
+        </v-list>
       </v-flex>
 
   </div>

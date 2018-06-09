@@ -6,7 +6,7 @@
         <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
             <v-card style="margin-bottom:20px;"  v-for="item in news">
               <div>
-                <a :href="'/#/news/'+ item._id"><img :src="choose_item(item.img)"  style="width: 100%;  height: auto;" /></a>
+                <a :href="'/#/news/'+ item._id"><img :src="choose_item(item.insert_date)"  style="width: 100%;  height: auto;" /></a>
               </div>
               <v-list-tile  avatar v-for="tag in item.tags" v-bind:key="tag.title">
                 <div v-if="tag.title === 'Новости'"></div>
@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     choose_item: function (item) {
-      return this.$root.news_img_serv+item
+      return 'http://localhost:9000/img/'+item+'.jpg'
 
     },
     loadMore: function() {

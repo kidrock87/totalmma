@@ -13,6 +13,7 @@ import Admin_edit_news from '@/components/Admin_edit_news'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/hello',

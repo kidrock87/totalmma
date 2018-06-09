@@ -65,6 +65,7 @@ export default {
   data () {
     return {
       news_title: '',
+      insert_date: '',
       news_content: '',
       post_url: '',
       razd1: '',
@@ -149,12 +150,13 @@ export default {
           }
 
          var title = response.data.result.title;
+
          var img = response.data.result.image_url;
          var url = vm.$root.server_route+vm.$root.server_port+'/update_news/'+news_id;
-
+         var insert_date = vm.insert_date;
 
          if(post_url.length > 0){
-               axios.post(url, { title: title, content: content, tags: tags, img: img, post_url: original_post_url})
+               axios.post(url, { title: title, content: content, tags: tags, img: img, post_url: original_post_url,insert_date: insert_date})
                 .then(function (response) {
                   console.log(response);
                   router.push({ path: '/admin' })
@@ -226,6 +228,7 @@ export default {
          this.news_content = response.data.content;
          this.tags = response.data.tags;
          this.post_url = response.data.post_url;
+         this.insert_date = response.data.insert_date;
 
          //this.old_img = response.data.img
          //this.posts = response.data

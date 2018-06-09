@@ -16,7 +16,7 @@
           >
             <v-flex xs6>
               <v-subheader v-if="item.heading">
-                {{ item.heading }}
+                a{{ item.heading }}
               </v-subheader>
             </v-flex>
             <v-flex xs6 class="text-xs-center">
@@ -33,7 +33,7 @@
             <v-list-tile slot="activator">
               <v-list-tile-content>
                 <v-list-tile-title>
-                  {{ item.text }}
+                  <a :href="item.link">{{ item.text }}</a>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -58,7 +58,7 @@
             </v-list-tile-action>
             <v-list-tile-content>
               <v-list-tile-title>
-                {{ item.text }}
+                <a :href="item.link">{{ item.text }}</a>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -223,36 +223,10 @@
       dialog: false,
       drawer: null,
       items: [
-        { icon: 'contacts', text: 'Contacts' },
-        { icon: 'history', text: 'Frequently contacted' },
-        { icon: 'content_copy', text: 'Duplicates' },
-        {
-          icon: 'keyboard_arrow_up',
-          'icon-alt': 'keyboard_arrow_down',
-          text: 'Labels',
-          model: true,
-          children: [
-            { icon: 'add', text: 'Create label' }
-          ]
-        },
-        {
-          icon: 'keyboard_arrow_up',
-          'icon-alt': 'keyboard_arrow_down',
-          text: 'More',
-          model: false,
-          children: [
-            { text: 'Import' },
-            { text: 'Export' },
-            { text: 'Print' },
-            { text: 'Undo changes' },
-            { text: 'Other contacts' }
-          ]
-        },
-        { icon: 'settings', text: 'Settings' },
-        { icon: 'chat_bubble', text: 'Send feedback' },
-        { icon: 'help', text: 'Help' },
-        { icon: 'phonelink', text: 'App downloads' },
-        { icon: 'keyboard', text: 'Go to the old version' }
+        { icon: 'contacts', text: 'Главная', link:'/' },
+        { icon: 'history', text: 'Девушки',  link:'/girls' },
+        { icon: 'content_copy', text: 'К-1',  link:'/k1' },
+        { icon: 'content_copy', text: 'Видео', link:'/video' }
       ]
     }),
     props: {
